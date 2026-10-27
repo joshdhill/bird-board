@@ -142,6 +142,60 @@
   .dot::before { content: ""; width: 7px; height: 7px; border-radius: 50%;
     background: var(--rule); transition: background .3s; }
   .dot.on::before { background: var(--mark); }
+  /* Music: the note button and Spotify's player panel */
+  .foot-r { display: flex; justify-content: flex-end; align-items: center; gap: calc(var(--u) * .7); min-width: 0; }
+  .mbtn { position: relative; flex: none; width: 32px; height: 32px; padding: 0; display: grid;
+    place-items: center; border: 1px solid var(--rule); border-radius: 50%; background: none;
+    color: var(--ink-soft); cursor: pointer; opacity: .7; touch-action: manipulation;
+    transition: opacity .2s, color .2s, border-color .2s; }
+  .mbtn svg { display: block; width: 18px; height: 18px; }
+  .mbtn:hover, .mbtn[aria-expanded="true"], body.music-on #mbtn { opacity: 1; color: var(--mark); border-color: var(--mark); }
+  body.music-on #mbtn::after { content: ""; position: absolute; top: -2px; right: -2px; width: 9px; height: 9px;
+    border-radius: 50%; background: var(--mark); box-shadow: 0 0 0 2px var(--paper); }
+  .mbtn:focus-visible, .m-x:focus-visible, .chip button:focus-visible, .m-add button:focus-visible,
+  .m-add input:focus-visible, .m-stop:focus-visible { outline: 2px solid var(--mark); outline-offset: 2px; }
+  html.nomusic #mbtn, html.nomusic .music { display: none !important; }
+  .vbtn .v-off, .vbtn.off .v-on { display: none; }
+  .vbtn.off .v-off { display: inline; }
+  .vbtn:not(.off) { opacity: 1; color: var(--mark); border-color: var(--mark); }
+  .vbtn.wait::after { content: ""; position: absolute; top: -2px; right: -2px; width: 9px; height: 9px;
+    border-radius: 50%; background: var(--mark); box-shadow: 0 0 0 2px var(--paper); }
+  @media (prefers-reduced-motion: no-preference) { .vbtn.wait::after { animation: v-wait 2.4s ease-in-out infinite; } }
+  @keyframes v-wait { 50% { opacity: .25; } }
+  .vbtn:focus-visible { outline: 2px solid var(--mark); outline-offset: 2px; }
+  .music { position: fixed; right: calc(var(--u) * 1.8); bottom: calc(52px + env(safe-area-inset-bottom)); z-index: 15;
+    width: min(380px, calc(100vw - var(--u) * 3.6));
+    max-height: calc(var(--appH, 100dvh) - 72px - env(safe-area-inset-bottom)); overflow-y: auto;
+    background: var(--card); border: 1px solid var(--card-edge); border-radius: 6px;
+    padding: 10px 12px 12px; box-shadow: 0 12px 34px rgba(35, 43, 49, .3); color: var(--ink);
+    visibility: hidden; opacity: 0; transform: translateY(10px);
+    transition: opacity .25s ease, transform .25s ease, visibility 0s linear .25s; }
+  .music.open { visibility: visible; opacity: 1; transform: none;
+    transition: opacity .25s ease, transform .25s ease; }
+  .m-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
+  .m-head b { font-weight: 600; font-size: 1.1em; }
+  .m-head span { flex: 1; color: var(--ink-soft); font-size: .9em; }
+  .m-x { width: 32px; height: 32px; margin: -6px -8px -6px 0; padding: 0; background: none; border: 0;
+    border-radius: 50%; color: var(--ink); font-size: 24px; line-height: 1; cursor: pointer; }
+  .m-frame iframe { display: block; width: 100%; border: 0; border-radius: 12px; background: rgba(35, 43, 49, .07); }
+  .m-note { margin: 8px 0 0; color: var(--ink-soft); font-size: .86em; line-height: 1.35; }
+  .m-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .chip { display: inline-flex; align-items: stretch; border: 1px solid var(--rule); border-radius: 999px; overflow: hidden; }
+  .chip.on { background: var(--mark); border-color: var(--mark); color: #faf8f2; }
+  .chip button { background: none; border: 0; color: inherit; font: inherit; font-size: .9em;
+    padding: 6px 11px; cursor: pointer; touch-action: manipulation; }
+  .chip .c-x { padding-left: 2px; padding-right: 9px; opacity: .7; }
+  .m-add { display: flex; gap: 6px; margin-top: 10px; }
+  .m-add input { flex: 1; min-width: 0; font: inherit; font-size: 16px; color: var(--ink);
+    background: rgba(255, 255, 255, .7); border: 1px solid var(--rule); border-radius: 6px;
+    padding: 7px 9px; user-select: text; -webkit-user-select: text; }
+  .m-add button, .m-stop { font: inherit; font-size: .92em; color: var(--ink); background: none;
+    border: 1px solid var(--rule); border-radius: 6px; padding: 7px 13px; cursor: pointer; touch-action: manipulation; }
+  .m-add button { background: var(--mark); border-color: var(--mark); color: #faf8f2; }
+  .m-err { margin: 6px 0 0; color: #9a3b2a; font-size: .86em; }
+  .m-err:empty { display: none; }
+  .m-stop { margin-top: 10px; }
+  @media (prefers-reduced-motion: reduce) { .music, .music.open { transition: none; } }
   .modal { position: fixed; inset: 0; display: none; place-items: center;
     background: rgba(35, 43, 49, .46); z-index: 10; }
   .modal.open { display: grid; }
@@ -270,8 +324,19 @@
 <footer class="foot">
   <p class="also" id="also"></p>
   <div class="dots" id="dots"></div>
-  <p class="upd" id="upd"></p>
+  <div class="foot-r"><p class="upd" id="upd"></p>
+    <button class="mbtn vbtn" id="vbtn" type="button" aria-label="Read new birds aloud" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 9v6h4l5 4V5L8 9H4z"/><path class="v-on" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M16 9.2a4 4 0 0 1 0 5.6M18.6 6.8a7.4 7.4 0 0 1 0 10.4"/><path class="v-off" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M16.5 9.5l5 5M21.5 9.5l-5 5"/></svg></button>
+    <button class="mbtn" id="mbtn" type="button" aria-label="Music" title="Music" aria-expanded="false" aria-controls="music"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></button></div>
 </footer>
+<section class="music" id="music" aria-label="Music" aria-hidden="true">
+  <div class="m-head"><b>Music</b><span>Spotify</span><button class="m-x" id="m-x" type="button" aria-label="Close the music panel">&times;</button></div>
+  <div class="m-frame" id="m-frame"></div>
+  <p class="m-note">Press play in the player. Sign in to Spotify inside it to hear full songs. Closing this panel keeps the music going.</p>
+  <div class="m-chips" id="m-chips"></div>
+  <form class="m-add" id="m-form"><input id="m-in" type="text" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Paste a Spotify link" aria-label="Spotify link"><button type="submit">Play</button></form>
+  <p class="m-err" id="m-err" role="alert"></p>
+  <button class="m-stop" id="m-stop" type="button">Stop music</button>
+</section>
 <div class="modal" id="modal">
   <div class="card" id="card" role="dialog" aria-modal="true" aria-labelledby="m-name">
     <button class="close" id="close" type="button" aria-label="Close">&times;</button>
@@ -306,7 +371,7 @@
 <script>
 (function () {
   'use strict';
-  var D = {"birds": [{"name": "House Finch", "sci": "Haemorhous mexicanus", "n": 65, "first": "8:17 AM", "last": "9:32 AM", "ts": 1793103447, "mins": [497, 500, 501, 502, 502, 503, 505, 506, 506, 507, 509, 510, 511, 511, 512, 512, 513, 514, 518, 519, 522, 528, 529, 530, 534, 534, 535, 538, 538, 542, 543, 543, 544, 545, 546, 546, 547, 547, 548, 548, 548, 549, 549, 550, 550, 551, 551, 552, 552, 553, 554, 554, 554, 555, 556, 558, 558, 560, 563, 568, 569, 569, 570, 571, 572], "anim": null, "trunk": false, "fact": "Native to the West, house finches were released on Long Island in 1940 as pet-shop “Hollywood finches” and spread across the East. Redder males are favored by females.", "key": "housefinch", "cm": 14.0, "img": "cutouts/housefinch.png", "w": 800, "h": 581, "len": 662.0}, {"name": "American Goldfinch", "sci": "Spinus tristis", "n": 11, "first": "8:18 AM", "last": "9:32 AM", "ts": 1793103531, "mins": [498, 501, 512, 539, 552, 556, 558, 569, 570, 570, 572], "anim": null, "trunk": false, "fact": "One of the strictest vegetarians among birds. Goldfinches nest late in summer, when thistle seeds are ripe, and swap bright yellow for olive-brown in winter.", "key": "goldfinch", "cm": 12.0, "img": "cutouts/goldfinch.png", "w": 517, "h": 369, "len": 415.0}, {"name": "Carolina Chickadee", "sci": "Poecile carolinensis", "n": 30, "first": "8:19 AM", "last": "9:31 AM", "ts": 1793103552, "mins": [499, 499, 499, 502, 504, 508, 512, 512, 514, 515, 517, 517, 518, 519, 521, 522, 525, 526, 529, 536, 546, 549, 550, 555, 556, 562, 565, 570, 570, 571], "anim": null, "trunk": false, "fact": "Chickadees hide seeds in many separate spots and can remember where for weeks, then dig them back out when food gets scarce.", "key": "chickadee", "cm": 12.5, "img": "cutouts/chickadee.png", "w": 686, "h": 800, "len": 829.0}, {"name": "Carolina Wren", "sci": "Thryothorus ludovicianus", "n": 3, "first": "8:22 AM", "last": "9:24 AM", "ts": 1793103744, "mins": [502, 563, 564], "anim": null, "trunk": false, "fact": "Its song sounds like “teakettle, teakettle, teakettle,” and pairs often sing duets. It will nest in odd places: flowerpots, mailboxes, even old boots.", "life": true, "key": "wren", "cm": 13.0, "img": "cutouts/wren.png", "w": 800, "h": 633, "len": 781.0}, {"name": "Tufted Titmouse", "sci": "Baeolophus bicolor", "n": 14, "first": "8:24 AM", "last": "9:29 AM", "ts": 1793103862, "mins": [504, 517, 523, 527, 528, 531, 536, 560, 561, 564, 564, 567, 569, 569], "anim": null, "trunk": false, "fact": "Titmice line their nests with hair, and they have been seen plucking it from live raccoons, dogs, and even people.", "key": "titmouse", "cm": 16.5, "img": "cutouts/titmouse.png", "w": 574, "h": 800, "len": 653.0}, {"name": "Dark-eyed Junco", "sci": "Junco hyemalis", "n": 5, "first": "8:27 AM", "last": "8:58 AM", "ts": 1793104069, "mins": [507, 509, 519, 532, 538], "anim": null, "trunk": false, "fact": "Often called “snowbirds” because they show up as winter arrives. The white outer tail feathers flash as they flit away.", "life": true, "key": "junco", "cm": 15.5, "img": "cutouts/junco.png", "w": 800, "h": 562, "len": 625.0}, {"name": "Northern Cardinal", "sci": "Cardinalis cardinalis", "n": 3, "first": "8:31 AM", "last": "8:45 AM", "ts": 1793104306, "mins": [511, 524, 525], "anim": null, "trunk": false, "fact": "Female cardinals sing too, which is unusual for a North American songbird. During courtship the male feeds her seeds beak to beak.", "life": true, "key": "cardinal", "cm": 22.0, "img": "cutouts/cardinal.png", "w": 516, "h": 348, "len": 530.0}, {"name": "Pileated Woodpecker", "sci": "Dryocopus pileatus", "n": 1, "first": "8:33 AM", "last": "8:33 AM", "ts": 1793104386, "mins": [513], "anim": null, "trunk": false, "fact": "It chisels big rectangular holes in dead wood while hunting carpenter ants. Abandoned holes later shelter owls, ducks and other cavity nesters.", "life": true, "key": "pileated", "cm": 45.0, "img": "cutouts/pileated.png", "w": 649, "h": 800, "len": 737.0}, {"name": "Fish Crow", "sci": "Corvus ossifragus", "n": 35, "first": "8:37 AM", "last": "9:32 AM", "ts": 1793104644, "mins": [517, 518, 519, 519, 520, 520, 521, 521, 522, 522, 523, 524, 524, 524, 525, 526, 527, 528, 528, 529, 529, 531, 531, 532, 533, 551, 556, 557, 557, 557, 570, 571, 571, 572, 572], "anim": null, "trunk": false, "fact": "It looks just like an American Crow. The giveaway is the voice: a nasal, two-note “uh-uh” instead of a clear “caw.”", "key": "fishcrow", "cm": 38.0, "img": "cutouts/fishcrow.png", "w": 800, "h": 474, "len": 557.0}, {"name": "Golden-crowned Kinglet", "sci": "Regulus satrapa", "n": 2, "first": "8:40 AM", "last": "8:49 AM", "ts": 1793104819, "mins": [520, 529], "anim": null, "trunk": false, "fact": "One of the tiniest songbirds here, yet it survives freezing winter nights by shivering, puffing up its feathers, and huddling with others.", "key": "goldenkinglet", "cm": 10.0, "img": "cutouts/goldenkinglet.png", "w": 800, "h": 541, "len": 578.0}, {"name": "Eastern Bluebird", "sci": "Sialia sialis", "n": 9, "first": "8:40 AM", "last": "9:27 AM", "ts": 1793104824, "mins": [520, 523, 537, 537, 539, 545, 566, 566, 567], "anim": null, "trunk": false, "fact": "Bluebirds nest in tree cavities, and their numbers crashed in the early 1900s when starlings and house sparrows took the holes. Volunteer nest-box trails helped them rebound.", "key": "bluebird", "cm": 18.0, "img": "cutouts/bluebird.png", "w": 800, "h": 609, "len": 744.0}, {"name": "White-throated Sparrow", "sci": "Zonotrichia albicollis", "n": 38, "first": "8:43 AM", "last": "9:28 AM", "ts": 1793104993, "mins": [523, 523, 530, 532, 532, 533, 533, 534, 535, 535, 539, 540, 543, 544, 552, 553, 555, 556, 557, 558, 558, 559, 559, 559, 559, 560, 561, 562, 563, 563, 564, 565, 566, 567, 567, 567, 568, 568], "anim": null, "trunk": false, "fact": "White-throats come in two color forms, white-striped and tan-striped, and almost always pair with the opposite form. Listen for “Oh-sweet-Canada, Canada, Canada.”", "key": "whitethroated", "cm": 17.0, "img": "cutouts/whitethroated.png", "w": 800, "h": 460, "len": 599.0}, {"name": "Red-bellied Woodpecker", "sci": "Melanerpes carolinus", "n": 2, "first": "8:48 AM", "last": "8:49 AM", "ts": 1793105285, "mins": [528, 529], "anim": null, "trunk": true, "fact": "The “red belly” is only a faint pink blush you will rarely see. The red cap is the giveaway. Its barbed tongue can reach about two inches past the bill tip.", "life": true, "key": "redbellied", "cm": 24.0, "img": "cutouts/redbellied.png", "w": 400, "h": 800, "len": 516.0}, {"name": "Ruby-crowned Kinglet", "sci": "Corthylio calendula", "n": 2, "first": "8:57 AM", "last": "9:14 AM", "ts": 1793105856, "mins": [537, 554], "anim": null, "trunk": false, "fact": "Its ruby crown stays hidden under olive feathers until the male gets excited, then it flares up. A ruby-crowned kinglet flicks its wings constantly.", "key": "rubykinglet", "cm": 10.8, "img": "cutouts/rubykinglet.png", "w": 800, "h": 653, "len": 568.0}, {"name": "Downy Woodpecker", "sci": "Dryobates pubescens", "n": 3, "first": "9:03 AM", "last": "9:24 AM", "ts": 1793106200, "mins": [543, 555, 564], "anim": null, "trunk": false, "fact": "North America’s smallest woodpecker. It is small enough to forage on thin weed stalks and twigs that bigger woodpeckers can’t cling to.", "key": "downy", "cm": 16.0, "img": "cutouts/downy.png", "w": 486, "h": 800, "len": 707.0}, {"name": "White-breasted Nuthatch", "sci": "Sitta carolinensis", "n": 2, "first": "9:04 AM", "last": "9:18 AM", "ts": 1793106283, "mins": [544, 558], "anim": null, "trunk": true, "fact": "Nuthatches climb down tree trunks head first. The name comes from “nut-hack”: they wedge a seed into bark and hack it open.", "key": "nuthatch", "cm": 14.0, "img": "cutouts/nuthatch.png", "w": 532, "h": 327, "len": 372.0}, {"name": "Blue Jay", "sci": "Cyanocitta cristata", "n": 2, "first": "9:20 AM", "last": "9:25 AM", "ts": 1793107204, "mins": [560, 565], "anim": null, "trunk": false, "fact": "That blue isn’t a pigment. Tiny structures in the feathers scatter light, which is why a crushed blue feather looks brown. Jays also bury acorns and help spread oak trees.", "key": "bluejay", "cm": 28.0, "img": "cutouts/bluejay.png", "w": 385, "h": 369, "len": 474.0}, {"name": "Cape May Warbler", "sci": "Setophaga tigrina", "n": 1, "first": "9:21 AM", "last": "9:21 AM", "ts": 1793107268, "mins": [561], "anim": null, "trunk": false, "fact": "Its tongue is curled into a tiny tube, a built-in straw for sipping nectar and fruit juice. It nests in northern spruce forests and is named for Cape May, New Jersey, where one of the first specimens was collected.", "life": true, "key": "capemay", "cm": 13.0, "img": "cutouts/capemay.png", "w": 800, "h": 587, "len": 703.0}], "also": [], "date": "Tuesday, October 27", "where": "", "updated": "9:32 AM", "sun": null, "code": "51f08c0e4a"};
+  var D = {"birds": [{"name": "House Finch", "sci": "Haemorhous mexicanus", "n": 83, "first": "8:17 AM", "last": "10:16 AM", "ts": 1793103447, "mins": [497, 500, 501, 502, 502, 503, 505, 506, 506, 507, 509, 510, 511, 511, 512, 512, 513, 514, 518, 519, 522, 528, 529, 530, 534, 534, 535, 538, 538, 542, 543, 543, 544, 545, 546, 546, 547, 547, 548, 548, 548, 549, 549, 550, 550, 551, 551, 552, 552, 553, 554, 554, 554, 555, 556, 558, 558, 560, 563, 568, 569, 569, 570, 571, 572, 573, 577, 578, 579, 581, 583, 584, 585, 585, 585, 586, 588, 588, 589, 589, 596, 606, 616], "anim": null, "trunk": false, "fact": "Native to the West, house finches were released on Long Island in 1940 as pet-shop “Hollywood finches” and spread across the East. Redder males are favored by females.", "key": "housefinch", "cm": 14.0, "img": "cutouts/housefinch.png", "w": 800, "h": 581, "len": 662.0}, {"name": "American Goldfinch", "sci": "Spinus tristis", "n": 13, "first": "8:18 AM", "last": "9:51 AM", "ts": 1793103531, "mins": [498, 501, 512, 539, 552, 556, 558, 569, 570, 570, 572, 586, 591], "anim": null, "trunk": false, "fact": "One of the strictest vegetarians among birds. Goldfinches nest late in summer, when thistle seeds are ripe, and swap bright yellow for olive-brown in winter.", "key": "goldfinch", "cm": 12.0, "img": "cutouts/goldfinch.png", "w": 517, "h": 369, "len": 415.0}, {"name": "Carolina Chickadee", "sci": "Poecile carolinensis", "n": 39, "first": "8:19 AM", "last": "10:10 AM", "ts": 1793103552, "mins": [499, 499, 499, 502, 504, 508, 512, 512, 514, 515, 517, 517, 518, 519, 521, 522, 525, 526, 529, 536, 546, 549, 550, 555, 556, 562, 565, 570, 570, 571, 584, 584, 598, 600, 602, 605, 608, 608, 610], "anim": null, "trunk": false, "fact": "Chickadees hide seeds in many separate spots and can remember where for weeks, then dig them back out when food gets scarce.", "key": "chickadee", "cm": 12.5, "img": "cutouts/chickadee.png", "w": 686, "h": 800, "len": 829.0}, {"name": "Carolina Wren", "sci": "Thryothorus ludovicianus", "n": 3, "first": "8:22 AM", "last": "9:24 AM", "ts": 1793103744, "mins": [502, 563, 564], "anim": null, "trunk": false, "fact": "Its song sounds like “teakettle, teakettle, teakettle,” and pairs often sing duets. It will nest in odd places: flowerpots, mailboxes, even old boots.", "life": true, "key": "wren", "cm": 13.0, "img": "cutouts/wren.png", "w": 800, "h": 633, "len": 781.0}, {"name": "Tufted Titmouse", "sci": "Baeolophus bicolor", "n": 20, "first": "8:24 AM", "last": "10:09 AM", "ts": 1793103862, "mins": [504, 517, 523, 527, 528, 531, 536, 560, 561, 564, 564, 567, 569, 569, 577, 579, 601, 602, 608, 609], "anim": null, "trunk": false, "fact": "Titmice line their nests with hair, and they have been seen plucking it from live raccoons, dogs, and even people.", "key": "titmouse", "cm": 16.5, "img": "cutouts/titmouse.png", "w": 574, "h": 800, "len": 653.0}, {"name": "Dark-eyed Junco", "sci": "Junco hyemalis", "n": 6, "first": "8:27 AM", "last": "9:45 AM", "ts": 1793104069, "mins": [507, 509, 519, 532, 538, 585], "anim": null, "trunk": false, "fact": "Often called “snowbirds” because they show up as winter arrives. The white outer tail feathers flash as they flit away.", "life": true, "key": "junco", "cm": 15.5, "img": "cutouts/junco.png", "w": 800, "h": 562, "len": 625.0}, {"name": "Northern Cardinal", "sci": "Cardinalis cardinalis", "n": 3, "first": "8:31 AM", "last": "8:45 AM", "ts": 1793104306, "mins": [511, 524, 525], "anim": null, "trunk": false, "fact": "Female cardinals sing too, which is unusual for a North American songbird. During courtship the male feeds her seeds beak to beak.", "life": true, "key": "cardinal", "cm": 22.0, "img": "cutouts/cardinal.png", "w": 516, "h": 348, "len": 530.0}, {"name": "Pileated Woodpecker", "sci": "Dryocopus pileatus", "n": 1, "first": "8:33 AM", "last": "8:33 AM", "ts": 1793104386, "mins": [513], "anim": null, "trunk": false, "fact": "It chisels big rectangular holes in dead wood while hunting carpenter ants. Abandoned holes later shelter owls, ducks and other cavity nesters.", "life": true, "key": "pileated", "cm": 45.0, "img": "cutouts/pileated.png", "w": 649, "h": 800, "len": 737.0}, {"name": "Fish Crow", "sci": "Corvus ossifragus", "n": 69, "first": "8:37 AM", "last": "10:19 AM", "ts": 1793104644, "mins": [517, 518, 519, 519, 520, 520, 521, 521, 522, 522, 523, 524, 524, 524, 525, 526, 527, 528, 528, 529, 529, 531, 531, 532, 533, 551, 556, 557, 557, 557, 570, 571, 571, 572, 572, 573, 573, 573, 574, 574, 574, 575, 575, 590, 590, 604, 605, 605, 609, 612, 612, 612, 613, 613, 614, 614, 614, 615, 615, 616, 616, 617, 617, 617, 618, 618, 618, 619, 619], "anim": null, "trunk": false, "fact": "It looks just like an American Crow. The giveaway is the voice: a nasal, two-note “uh-uh” instead of a clear “caw.”", "key": "fishcrow", "cm": 38.0, "img": "cutouts/fishcrow.png", "w": 800, "h": 474, "len": 557.0}, {"name": "Golden-crowned Kinglet", "sci": "Regulus satrapa", "n": 2, "first": "8:40 AM", "last": "8:49 AM", "ts": 1793104819, "mins": [520, 529], "anim": null, "trunk": false, "fact": "One of the tiniest songbirds here, yet it survives freezing winter nights by shivering, puffing up its feathers, and huddling with others.", "key": "goldenkinglet", "cm": 10.0, "img": "cutouts/goldenkinglet.png", "w": 800, "h": 541, "len": 578.0}, {"name": "Eastern Bluebird", "sci": "Sialia sialis", "n": 15, "first": "8:40 AM", "last": "10:20 AM", "ts": 1793104824, "mins": [520, 523, 537, 537, 539, 545, 566, 566, 567, 573, 580, 598, 605, 605, 620], "anim": null, "trunk": false, "fact": "Bluebirds nest in tree cavities, and their numbers crashed in the early 1900s when starlings and house sparrows took the holes. Volunteer nest-box trails helped them rebound.", "key": "bluebird", "cm": 18.0, "img": "cutouts/bluebird.png", "w": 800, "h": 609, "len": 744.0}, {"name": "White-throated Sparrow", "sci": "Zonotrichia albicollis", "n": 54, "first": "8:43 AM", "last": "10:15 AM", "ts": 1793104993, "mins": [523, 523, 530, 532, 532, 533, 533, 534, 535, 535, 539, 540, 543, 544, 552, 553, 555, 556, 557, 558, 558, 559, 559, 559, 559, 560, 561, 562, 563, 563, 564, 565, 566, 567, 567, 567, 568, 568, 575, 575, 575, 576, 576, 577, 580, 593, 598, 604, 604, 605, 606, 607, 612, 615], "anim": null, "trunk": false, "fact": "White-throats come in two color forms, white-striped and tan-striped, and almost always pair with the opposite form. Listen for “Oh-sweet-Canada, Canada, Canada.”", "key": "whitethroated", "cm": 17.0, "img": "cutouts/whitethroated.png", "w": 800, "h": 460, "len": 599.0}, {"name": "Red-bellied Woodpecker", "sci": "Melanerpes carolinus", "n": 2, "first": "8:48 AM", "last": "8:49 AM", "ts": 1793105285, "mins": [528, 529], "anim": null, "trunk": true, "fact": "The “red belly” is only a faint pink blush you will rarely see. The red cap is the giveaway. Its barbed tongue can reach about two inches past the bill tip.", "life": true, "key": "redbellied", "cm": 24.0, "img": "cutouts/redbellied.png", "w": 400, "h": 800, "len": 516.0}, {"name": "Ruby-crowned Kinglet", "sci": "Corthylio calendula", "n": 2, "first": "8:57 AM", "last": "9:14 AM", "ts": 1793105856, "mins": [537, 554], "anim": null, "trunk": false, "fact": "Its ruby crown stays hidden under olive feathers until the male gets excited, then it flares up. A ruby-crowned kinglet flicks its wings constantly.", "key": "rubykinglet", "cm": 10.8, "img": "cutouts/rubykinglet.png", "w": 800, "h": 653, "len": 568.0}, {"name": "Downy Woodpecker", "sci": "Dryobates pubescens", "n": 3, "first": "9:03 AM", "last": "9:24 AM", "ts": 1793106200, "mins": [543, 555, 564], "anim": null, "trunk": false, "fact": "North America’s smallest woodpecker. It is small enough to forage on thin weed stalks and twigs that bigger woodpeckers can’t cling to.", "key": "downy", "cm": 16.0, "img": "cutouts/downy.png", "w": 486, "h": 800, "len": 707.0}, {"name": "White-breasted Nuthatch", "sci": "Sitta carolinensis", "n": 7, "first": "9:04 AM", "last": "10:12 AM", "ts": 1793106283, "mins": [544, 558, 593, 599, 602, 611, 612], "anim": null, "trunk": true, "fact": "Nuthatches climb down tree trunks head first. The name comes from “nut-hack”: they wedge a seed into bark and hack it open.", "key": "nuthatch", "cm": 14.0, "img": "cutouts/nuthatch.png", "w": 532, "h": 327, "len": 372.0}, {"name": "Blue Jay", "sci": "Cyanocitta cristata", "n": 6, "first": "9:20 AM", "last": "9:55 AM", "ts": 1793107204, "mins": [560, 565, 580, 593, 595, 595], "anim": null, "trunk": false, "fact": "That blue isn’t a pigment. Tiny structures in the feathers scatter light, which is why a crushed blue feather looks brown. Jays also bury acorns and help spread oak trees.", "key": "bluejay", "cm": 28.0, "img": "cutouts/bluejay.png", "w": 385, "h": 369, "len": 474.0}, {"name": "Cape May Warbler", "sci": "Setophaga tigrina", "n": 1, "first": "9:21 AM", "last": "9:21 AM", "ts": 1793107268, "mins": [561], "anim": null, "trunk": false, "fact": "Its tongue is curled into a tiny tube, a built-in straw for sipping nectar and fruit juice. It nests in northern spruce forests and is named for Cape May, New Jersey, where one of the first specimens was collected.", "life": true, "key": "capemay", "cm": 13.0, "img": "cutouts/capemay.png", "w": 800, "h": 587, "len": 703.0}, {"name": "Rusty Blackbird", "sci": "Euphagus carolinus", "n": 2, "first": "10:00 AM", "last": "10:15 AM", "ts": 1793109649, "mins": [600, 615], "anim": null, "trunk": false, "fact": "Rusty Blackbirds have undergone one of the steepest declines of any North American landbird, and scientists are still working out why. They forage in wet woods, flipping leaves along streams.", "life": true, "key": "rustyblackbird", "cm": 23.0, "img": "cutouts/rustyblackbird.png", "w": 800, "h": 602, "len": 706.0}, {"name": "Canada Goose", "sci": "Branta canadensis", "n": 2, "first": "10:00 AM", "last": "10:01 AM", "ts": 1793109658, "mins": [600, 601], "anim": null, "trunk": false, "fact": "Flying in a V lets geese behind get a lift from the bird in front, and they take turns leading.", "life": true, "key": "canadagoose", "cm": 68.0, "img": "cutouts/canadagoose.png", "w": 800, "h": 761, "len": 881.0}, {"name": "American Crow", "sci": "Corvus brachyrhynchos", "n": 3, "first": "10:03 AM", "last": "10:13 AM", "ts": 1793109826, "mins": [603, 606, 613], "anim": null, "trunk": false, "fact": "Crows remember individual human faces for years, and they seem to pass the grudge along to other crows.", "key": "crow", "cm": 45.0, "img": "cutouts/crow.png", "w": 553, "h": 364, "len": 568.0}], "also": [], "date": "Tuesday, October 27", "where": "", "updated": "10:20 AM", "sun": null, "code": "db9d01e19a"};
   var root = document.documentElement;
   try {
     var tvq = /[?&]tv(?:=([^&#]*))?/.exec(location.search);
@@ -722,7 +787,12 @@
   $('close').addEventListener('click', closeModal);
   modal.addEventListener('click', function (e) { if (e.target === modal) { closeModal(); } });
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') { if (heroOn()) { closeHero(true); } else { closeModal(); } }
+    if (e.target && e.target.tagName === 'INPUT') { if (e.key === 'Escape') { closeMusic(); } return; }
+    if (e.key === 'Escape') {
+      if (heroOn()) { closeHero(true); }
+      else if (modal.classList.contains('open')) { closeModal(); }
+      else if (musicOpen()) { closeMusic(); }
+    }
     else if (e.key === 'ArrowRight' && pages.length > 1) { show(current + 1); restartAuto(); }
     else if (e.key === 'ArrowLeft' && pages.length > 1) { show(current - 1); restartAuto(); }
   });
@@ -775,6 +845,276 @@
       if (Math.abs(stage.clientWidth - lastW) >= 2 || Math.abs(stage.clientHeight - lastH) >= 2) { rebuildSoon(); }
     }).observe(stage);
   }
+  /* ---- Music: Spotify's own player, in a small panel ----
+     The note button at the bottom right opens it. It starts on the Peaceful Piano
+     playlist; the chips switch to another one, and pasting any Spotify link (a
+     playlist, album, song or artist) plays that instead. The choice is remembered
+     on that screen. Spotify's player decides what you hear: sign in to Spotify
+     inside it for full songs. While the player is loaded the board does not reload
+     itself (a reload would cut the music off), for up to 12 hours.
+     ?music=off hides the button on one screen; ?music=on brings it back. */
+  var MUSIC_PRESETS = [
+    { u: 'playlist:37i9dQZF1DX4sWSpwq3LiO', t: 'Peaceful Piano' },
+    { u: 'playlist:37i9dQZF1DX7K31D69s4M1', t: 'Piano in the Background' },
+    { u: 'playlist:37i9dQZF1DX4PP3DA4J0N8', t: 'Nature Sounds' },
+    { u: 'playlist:37i9dQZF1DX3Ogo9pFvBkY', t: 'Ambient Relaxation' }
+  ];
+  var music = $('music'), mbtn = $('mbtn'), mframe = $('m-frame'), musicCur = MUSIC_PRESETS[0].u,
+      musicSaved = [], musicLoaded = false, musicSince = 0;
+  try {
+    var mq = /[?&]music=(on|off)/.exec(location.search);
+    if (mq) { if (mq[1] === 'off') { localStorage.setItem('bb-music-off', '1'); } else { localStorage.removeItem('bb-music-off'); } }
+    if (localStorage.getItem('bb-music-off') === '1') { document.documentElement.classList.add('nomusic'); }
+    var ms = JSON.parse(localStorage.getItem('bb-music') || 'null');
+    if (ms && /^[a-z]+:[A-Za-z0-9]+$/.test(ms.cur || '')) { musicCur = ms.cur; }
+    if (ms && ms.saved && ms.saved.length) {
+      musicSaved = ms.saved.filter(function (x) { return x && /^[a-z]+:[A-Za-z0-9]+$/.test(x.u || ''); }).slice(0, 6);
+    }
+  } catch (e) { /* storage blocked: the first playlist is used each time */ }
+  function musicHold() { return (musicLoaded && Date.now() - musicSince < 43200000) || voiceHold(); }
+  function musicOpen() { return music.classList.contains('open'); }
+  function saveMusic() { try { localStorage.setItem('bb-music', JSON.stringify({ cur: musicCur, saved: musicSaved })); } catch (e) {} }
+  /* A Spotify link, an app address (spotify:playlist:...) or even pasted embed code. */
+  function parseSpotify(text) {
+    text = String(text || '');
+    var m = /spotify:(playlist|album|track|artist|episode|show):([A-Za-z0-9]{10,30})/.exec(text) ||
+      /open\.spotify\.com\/(?:intl-[a-z-]+\/)?(?:embed\/)?(?:user\/[^\/?#\s"]+\/)?(playlist|album|track|artist|episode|show)\/([A-Za-z0-9]{10,30})/i.exec(text);
+    return m ? m[1].toLowerCase() + ':' + m[2] : '';
+  }
+  function sizeMusic() {
+    var f = mframe.querySelector('iframe');
+    if (!f) { return; }
+    var kind = mframe.getAttribute('data-kind'), small = kind === 'track' || kind === 'episode';
+    f.height = small ? 152 : Math.max(232, Math.min(352, (window.innerHeight || 700) - 290));
+  }
+  function drawChips() {
+    var box = $('m-chips');
+    box.innerHTML = '';
+    function add(item, removable) {
+      var wrap = document.createElement('span'), b = document.createElement('button');
+      wrap.className = 'chip' + (item.u === musicCur ? ' on' : '');
+      b.type = 'button'; b.textContent = item.t;
+      b.addEventListener('click', function () { loadMusic(item.u); });
+      wrap.appendChild(b);
+      if (removable) {
+        var x = document.createElement('button');
+        x.type = 'button'; x.className = 'c-x'; x.textContent = '×'; x.setAttribute('aria-label', 'Remove ' + item.t);
+        x.addEventListener('click', function () {
+          musicSaved = musicSaved.filter(function (s) { return s.u !== item.u; });
+          saveMusic(); drawChips();
+        });
+        wrap.appendChild(x);
+      }
+      box.appendChild(wrap);
+    }
+    MUSIC_PRESETS.forEach(function (p) { add(p, false); });
+    musicSaved.forEach(function (p) { add(p, true); });
+  }
+  function loadMusic(u) {
+    var p = u.split(':'), f = mframe.querySelector('iframe');
+    if (!f) {
+      f = document.createElement('iframe');
+      f.title = 'Spotify player';
+      f.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture');
+      f.setAttribute('allowfullscreen', '');
+      f.setAttribute('frameborder', '0');
+      mframe.appendChild(f);
+    }
+    f.src = 'https://open.spotify.com/embed/' + p[0] + '/' + p[1] + '?utm_source=generator';
+    mframe.setAttribute('data-kind', p[0]);
+    musicCur = u; musicLoaded = true; musicSince = Date.now();
+    document.body.classList.add('music-on');
+    sizeMusic(); drawChips(); saveMusic();
+  }
+  function openMusic() {
+    if (!musicLoaded) { loadMusic(musicCur); }
+    music.classList.add('open'); music.setAttribute('aria-hidden', 'false');
+    mbtn.setAttribute('aria-expanded', 'true');
+  }
+  function closeMusic() {
+    music.classList.remove('open'); music.setAttribute('aria-hidden', 'true');
+    mbtn.setAttribute('aria-expanded', 'false');
+  }
+  function stopMusic() {
+    mframe.innerHTML = ''; musicLoaded = false;
+    document.body.classList.remove('music-on');
+    closeMusic();
+  }
+  /* A pasted link gets a chip of its own, named by Spotify when it answers. */
+  function nameMusic(item) {
+    if (!window.fetch) { return; }
+    var p = item.u.split(':');
+    fetch('https://open.spotify.com/oembed?url=' + encodeURIComponent('https://open.spotify.com/' + p[0] + '/' + p[1]))
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) { if (j && j.title) { item.t = String(j.title).slice(0, 40); saveMusic(); drawChips(); } })
+      .catch(function () { /* keeps the plain label */ });
+  }
+  mbtn.addEventListener('click', function () { if (musicOpen()) { closeMusic(); } else { openMusic(); } });
+  $('m-x').addEventListener('click', closeMusic);
+  $('m-stop').addEventListener('click', stopMusic);
+  $('m-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var inp = $('m-in'), err = $('m-err'), u = parseSpotify(inp.value);
+    if (!u) { err.textContent = 'That is not a Spotify link. In Spotify, choose Share, then Copy link.'; return; }
+    err.textContent = ''; inp.value = '';
+    var known = MUSIC_PRESETS.concat(musicSaved).some(function (q) { return q.u === u; });
+    if (!known) {
+      var kind = u.split(':')[0], item = { u: u, t: kind.charAt(0).toUpperCase() + kind.slice(1) };
+      musicSaved.unshift(item); musicSaved = musicSaved.slice(0, 6);
+      nameMusic(item);
+    }
+    loadMusic(u);
+  });
+  $('m-in').addEventListener('input', function () { $('m-err').textContent = ''; });
+  window.addEventListener('resize', sizeMusic);
+  drawChips();
+  /* ---- Voice: a calm voice reads each new-bird card, then the bird calls ----
+     The speaker button next to the note turns it on or off (on by default; each
+     screen remembers). Browsers only allow sound after someone has touched the
+     page, so after the page loads, one tap anywhere is needed; until then the
+     speaker button shows a dot. Quiet before 7 AM and from 9 PM
+     (?voicehours=6-22 changes that on one screen). ?voice=Aria picks a voice by
+     name; ?voice= alone goes back to choosing automatically. The call is
+     sounds/<genus-species>.mp3 (from xeno-canto), played for up to 20 seconds. */
+  var VOICE_RATE = 0.84, VOICE_PITCH = 0.92, CALL_MAX_MS = 20000, VOICE_DELAY_MS = 1600;
+  var vbtn = $('vbtn'), voiceOn = true, voiceFrom = 7, voiceTo = 21, voiceWant = '',
+      voiceReady = false, voiceSince = 0, voiceGreeted = false, voiceToken = 0,
+      voiceKeep = [], callAudio = null, callTimers = [];
+  var canSpeak = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
+  try {
+    if (localStorage.getItem('bb-voice') === 'off') { voiceOn = false; }
+    var vh = /[?&]voicehours=(\d{1,2})-(\d{1,2})/.exec(location.search);
+    if (vh) { localStorage.setItem('bb-vhours', vh[1] + '-' + vh[2]); }
+    var vs = /^(\d{1,2})-(\d{1,2})$/.exec(localStorage.getItem('bb-vhours') || '');
+    if (vs) { voiceFrom = +vs[1]; voiceTo = +vs[2]; }
+    var vn = /[?&]voice=([^&#]*)/.exec(location.search);
+    if (vn) { localStorage.setItem('bb-voice-name', decodeURIComponent(vn[1].replace(/\+/g, ' '))); }
+    voiceWant = localStorage.getItem('bb-voice-name') || '';
+  } catch (e) { /* storage blocked: defaults */ }
+  if (navigator.userActivation && navigator.userActivation.hasBeenActive) { voiceReady = true; voiceSince = Date.now(); }
+  function voiceHold() { return voiceOn && voiceReady && Date.now() - voiceSince < 43200000; }
+  function voiceQuiet() { var h = new Date().getHours(); return h < voiceFrom || h >= voiceTo; }
+  function drawVoice() {
+    vbtn.setAttribute('aria-pressed', voiceOn ? 'true' : 'false');
+    vbtn.classList.toggle('off', !voiceOn);
+    vbtn.classList.toggle('wait', voiceOn && !voiceReady);
+    vbtn.title = !voiceOn ? 'Voice is off. Tap to turn it on.' :
+      (voiceReady ? 'Voice is on. Tap to turn it off.' : 'Tap anywhere to let the board speak.');
+  }
+  /* A calm, natural voice if this device has one: Edge's "Natural" voices, the
+     Mac's Premium/Enhanced ones, then Google's, then any English voice. */
+  var CALM = /aria|jenny|michelle|ava|emma|libby|sonia|natasha|clara|samantha|allison|serena|karen|moira|tessa|zoe|susan|female/i;
+  function pickVoice() {
+    if (!canSpeak) { return null; }
+    var all = speechSynthesis.getVoices(), en = all.filter(function (v) { return /^en(-|_|$)/i.test(v.lang); });
+    if (voiceWant) {
+      var w = voiceWant.toLowerCase();
+      for (var i = 0; i < all.length; i++) { if (all[i].name.toLowerCase().indexOf(w) >= 0) { return all[i]; } }
+    }
+    var best = null, bestScore = -1;
+    en.forEach(function (v) {
+      var n = v.name, sc = 0;
+      if (/natural/i.test(n)) { sc += 60; }
+      if (/premium/i.test(n)) { sc += 55; } else if (/enhanced/i.test(n)) { sc += 45; }
+      if (/^google/i.test(n)) { sc += 30; }
+      if (CALM.test(n)) { sc += 15; }
+      if (/en[-_]us/i.test(v.lang)) { sc += 4; } else if (/en[-_]gb/i.test(v.lang)) { sc += 3; }
+      if (/zarvox|whisper|bad news|bells|boing|bubbles|cellos|good news|jester|organ|superstar|trinoids|wobble|albert|fred|junior|ralph|grandpa|grandma|eddy|flo|reed|rocko|sandy|shelley/i.test(n)) { sc -= 100; }
+      if (sc > bestScore) { bestScore = sc; best = v; }
+    });
+    return best;
+  }
+  if (canSpeak && speechSynthesis.addEventListener) { speechSynthesis.addEventListener('voiceschanged', function () {}); }
+  function stopCall(fast) {
+    callTimers.forEach(clearTimeout); callTimers = [];
+    var a = callAudio; callAudio = null;
+    if (!a) { return; }
+    if (fast) { try { a.pause(); } catch (e) {} return; }
+    var v = a.volume, step = function () {
+      v -= 0.08;
+      if (v <= 0) { try { a.pause(); } catch (e) {} return; }
+      a.volume = v; setTimeout(step, 120);
+    };
+    step();
+  }
+  function hush() {
+    voiceToken++;
+    voiceKeep = [];
+    if (canSpeak) { try { speechSynthesis.cancel(); } catch (e) {} }
+    stopCall(true);
+  }
+  function playCall(b, token) {
+    if (!b.snd || token !== voiceToken) { return; }
+    var a = new Audio(absImg(b.snd));
+    a.volume = 0; callAudio = a;
+    var p = a.play();
+    if (p && p.catch) { p.catch(function () {}); }
+    var v = 0, up = function () {
+      if (callAudio !== a) { return; }
+      v = Math.min(0.85, v + 0.1); a.volume = v;
+      if (v < 0.85) { callTimers.push(setTimeout(up, 100)); }
+    };
+    up();
+    a.addEventListener('ended', function () { if (callAudio === a) { callAudio = null; } });
+    callTimers.push(setTimeout(function () { if (callAudio === a) { stopCall(false); } }, CALL_MAX_MS));
+  }
+  function sayLines(lines, token, done) {
+    var voice = pickVoice(), i = 0;
+    function next() {
+      if (token !== voiceToken) { return; }
+      if (i >= lines.length) { if (done) { done(); } return; }
+      var text = lines[i++], u = new SpeechSynthesisUtterance(text), moved = false;
+      function go(pause) { if (moved) { return; } moved = true; clearTimeout(safety); setTimeout(next, pause); }
+      if (voice) { u.voice = voice; u.lang = voice.lang; } else { u.lang = 'en-US'; }
+      u.rate = VOICE_RATE; u.pitch = VOICE_PITCH; u.volume = 1;
+      u.onend = function () { go(700); };
+      u.onerror = function () { go(300); };
+      var safety = setTimeout(function () { go(300); }, 4000 + text.length * 110);
+      voiceKeep.push(u);          /* some browsers drop the end event of a forgotten utterance */
+      speechSynthesis.speak(u);
+    }
+    next();
+  }
+  function factLines(fact) {
+    return (fact || '').match(/[^.!?]+[.!?]+["”’)]*|[^.!?]+$/g) || [];
+  }
+  function sayBird(b) {
+    hush();
+    if (!voiceOn || !voiceReady || voiceQuiet()) { return; }
+    var token = voiceToken;
+    setTimeout(function () {
+      if (token !== voiceToken) { return; }
+      var lines = [b.life ? 'New bird alert.' : 'A new bird today.', b.name + '.'].concat(factLines(b.fact).map(function (t) { return t.trim(); }));
+      if (canSpeak) { sayLines(lines, token, function () { setTimeout(function () { playCall(b, token); }, 500); }); }
+      else { playCall(b, token); }
+    }, VOICE_DELAY_MS);
+  }
+  function greetVoice() {
+    voiceGreeted = true;
+    hush();
+    if (!canSpeak) { return; }
+    var token = voiceToken;
+    sayLines(['Sound is on.', 'I’ll tell you quietly when a new bird arrives.'], token);
+  }
+  function wakeVoice() {
+    if (voiceReady) { return; }
+    voiceReady = true; voiceSince = Date.now(); drawVoice();
+    if (canSpeak) { try { speechSynthesis.getVoices(); } catch (e) {} }
+  }
+  ['pointerdown', 'keydown', 'touchend', 'click'].forEach(function (ev) {
+    document.addEventListener(ev, wakeVoice, true);
+  });
+  vbtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (voiceOn && !voiceGreeted) { greetVoice(); }
+    else {
+      voiceOn = !voiceOn;
+      try { if (voiceOn) { localStorage.removeItem('bb-voice'); } else { localStorage.setItem('bb-voice', 'off'); } } catch (e2) {}
+      if (voiceOn) { greetVoice(); } else { hush(); }
+    }
+    drawVoice();
+  });
+  drawVoice();
   /* ---- Live updates: ask the PC every few seconds; a new bird announces itself ---- */
   var seenKey = 'bb-seen-' + D.date, seen = {};
   try {
@@ -838,7 +1178,8 @@
     $('h-sci').textContent = (b.sci && b.sci !== b.name) ? b.sci : '';
     $('h-fact').textContent = b.fact || '';
     $('h-meta').textContent = (b.life ? 'First time heard here, at ' : 'Heard at ') + b.first + '.' +
-      (b.ph ? ' There is no picture for this bird yet.' : '');
+      (b.ph ? ' There is no picture for this bird yet.' : '') +
+      (b.sndby ? ' Call: ' + b.sndby + '.' : '');
   }
   /* Whatever the screen shape, the picture and the words must both fit: shrink them
      together, a little at a time, until nothing runs past the top or bottom. */
@@ -874,6 +1215,7 @@
     hero.classList.add('in');
     heroStart = Date.now();
     setHeroEnd(heroStart + ms, true);
+    sayBird(b);
     $('h-hint').classList.remove('quiet');
     clearTimeout(hintTimer);
     hintTimer = setTimeout(function () { $('h-hint').classList.add('quiet'); }, 9000);
@@ -897,6 +1239,7 @@
   }
   function closeHero(user) {
     var skipped = [];
+    if (user) { hush(); }
     if (user) { skipped = heroQ.map(function (q) { return q.name; }); heroQ.length = 0; }
     if (!heroNow) { return; }
     var gone = [heroNow.name].concat(skipped);
@@ -951,7 +1294,7 @@
      until nobody is touching the screen, and tries at most once every two
      minutes per version so a stale cached copy can never cause a reload loop. */
   function newCodeReload(code) {
-    if (modal.classList.contains('open') || heroOn() || Date.now() - lastTouch < 20000) { return false; }
+    if (modal.classList.contains('open') || heroOn() || musicHold() || Date.now() - lastTouch < 20000) { return false; }
     try {
       var last = JSON.parse(sessionStorage.getItem('bb-code') || 'null');
       if (last && last.c === code && Date.now() - last.t < 120000) { return false; }
@@ -968,6 +1311,7 @@
      (per ten minutes): an old saved copy that reloads into itself would otherwise
      reload forever. If the reload did not help, apply() rolls the day over in place. */
   function dateReload(date) {
+    if (musicHold()) { return false; }                 /* roll the day over in place instead */
     try {
       var last = JSON.parse(sessionStorage.getItem('bb-date') || 'null');
       if (last && last.d === date && Date.now() - last.t < 600000) { return false; }
@@ -1054,7 +1398,7 @@
      with them, only now and then so the page itself stays fresh. */
   setInterval(function () {
     var limit = liveOK ? 3600000 : 300000;
-    if (!modal.classList.contains('open') && !heroOn() && Date.now() - lastTouch > 90000 &&
+    if (!modal.classList.contains('open') && !heroOn() && !musicHold() && Date.now() - lastTouch > 90000 &&
         Date.now() - loadedAt > limit) { location.reload(); }
   }, 60000);
 })();
