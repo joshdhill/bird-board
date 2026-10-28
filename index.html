@@ -91,9 +91,10 @@
     animation-delay: calc(var(--i) * 90ms); }
   @keyframes settle { from { opacity: 0; transform: translateY(calc(var(--u) * .7)); }
     to { opacity: 1; transform: none; } }
-  /* Singing now: notes rising from the beak */
+  /* Now and then a little puff of notes rises from the beak (see chirpTick) */
   .notes { position: absolute; width: 0; height: 0; pointer-events: none; display: none; z-index: 2; }
-  .bird.singing .notes { display: block; }
+  .bird.chirp .notes { display: block; }
+  .notes.two i:nth-child(3) { display: none; }
   .notes i { position: absolute; left: .05em; top: -.8em; font-style: normal; font-weight: 700; line-height: 1;
     color: var(--mark); filter: saturate(1.4) brightness(.8);
     text-shadow: 0 0 2px var(--paper), 0 0 5px var(--paper), 0 0 9px var(--paper);
@@ -101,14 +102,12 @@
   .notes.left i { left: -.75em; --dx: -1; }
   .notes.flat i { top: -.45em; }
   @media (prefers-reduced-motion: no-preference) {
-    .notes i { animation: sing 3s ease-out infinite; }
-    .notes i:nth-child(2) { animation-delay: 1s; font-size: .82em; }
-    .notes i:nth-child(3) { animation-delay: 2s; font-size: .9em; }
+    .bird.chirp .notes i { animation: sing 2.4s ease-out both; }
+    .bird.chirp .notes i:nth-child(2) { animation-delay: .55s; font-size: .82em; }
+    .bird.chirp .notes i:nth-child(3) { animation-delay: 1.15s; font-size: .9em; }
+    .bird.chirp .notes.flat i { animation-name: sing-flat; }
   }
-  @media (prefers-reduced-motion: no-preference) {
-    .notes.flat i { animation-name: sing-flat; }
-  }
-  @media (prefers-reduced-motion: reduce) { .notes i:first-child { opacity: .85; } }
+  @media (prefers-reduced-motion: reduce) { .bird.chirp .notes i:first-child { opacity: .85; } }
   @keyframes sing-flat {
     0% { opacity: 0; transform: translate(0, .1em) scale(.55); }
     15% { opacity: 1; }
@@ -462,7 +461,7 @@
 <script>
 (function () {
   'use strict';
-  var D = {"birds": [{"name": "American Goldfinch", "sci": "Spinus tristis", "n": 1, "first": "8:59 AM", "last": "8:59 AM", "ts": 1793192354, "mins": [539], "anim": null, "trunk": false, "fact": "One of the strictest vegetarians among birds. Goldfinches nest late in summer, when thistle seeds are ripe, and swap bright yellow for olive-brown in winter.", "vox": "sounds/voice/spinus-tristis.mp3?v=1793113053", "snd": "sounds/spinus-tristis.mp3?v=1793113090", "sndby": "Will Sweet, xeno-canto XC453934, CC BY-NC-SA 4.0", "key": "goldfinch", "cm": 12.0, "img": "cutouts/goldfinch.png", "w": 517, "h": 369, "len": 415.0, "beak": [0.18, 0.15, "L"], "mask": {"c": 32, "r": 23, "b": "APAAAAH4AAAD/AAAB/wAAAH+AAEB/wADAf+ADgH/wBwB/8BwAf/h4AD/84AA//4AAH/8AAA/+AAAH/wAAA/+AAA/PgAAeA8AAfgHgAegB8AOAANAPAAAADgAAAA="}}, {"name": "Carolina Chickadee", "sci": "Poecile carolinensis", "n": 8, "first": "8:59 AM", "last": "9:08 AM", "ts": 1793192356, "mins": [539, 541, 542, 543, 543, 545, 547, 548], "anim": null, "trunk": false, "fact": "Chickadees hide seeds in many separate spots and can remember where for weeks, then dig them back out when food gets scarce.", "vox": "sounds/voice/poecile-carolinensis.mp3?v=1793113028", "snd": "sounds/poecile-carolinensis.mp3?v=1793113078", "sndby": "J.R. Rigby, xeno-canto XC309925, CC BY-NC-SA 4.0", "key": "chickadee", "cm": 12.5, "img": "cutouts/chickadee.png", "w": 686, "h": 800, "len": 829.0, "beak": [0.78, 0.05, "R"], "mask": {"c": 32, "r": 37, "b": "AAB+AQAA/8MAAf+DAAP/AwAD/wYAA/8EAAf/NAAH/zwAB/98AA//+AAP//4AH/+/AD//PgA//38Af/98AH//5AD//sAA//3AAf/9gAH//4AD//+AA///gAf//4AHg/wADgH4ABwA+AA4APAAcAH4AHAB8ADgA9AAwAeAAIAPAAAAHwAAABwAAAA4AAAAeAAAADAAAA=="}}, {"name": "House Finch", "sci": "Haemorhous mexicanus", "n": 5, "first": "8:59 AM", "last": "9:10 AM", "ts": 1793192388, "mins": [539, 542, 543, 547, 550], "anim": null, "trunk": false, "fact": "Native to the West, house finches were released on Long Island in 1940 as pet-shop “Hollywood finches” and spread across the East. Redder males are favored by females.", "vox": "sounds/voice/haemorhous-mexicanus.mp3?v=1793113005", "snd": "sounds/haemorhous-mexicanus.mp3?v=1793113108", "sndby": "Ted Floyd, xeno-canto XC622745, CC BY-NC-SA 4.0", "key": "housefinch", "cm": 14.0, "img": "cutouts/housefinch.png", "w": 800, "h": 581, "len": 662.0, "beak": [0.12, 0.13, "L"], "mask": {"c": 32, "r": 23, "b": "A+AAAAfwAQoP8AHOH/gB7wf8Af8D/gH/B/8A3wf/AP4H/4zgB//fwAP/zwAD//4AAf/+AAD/9AAAf/gAAD/8AA/+fAAH4B4AB+APAB6AD4A4AAeA8AAAAMAAAAA="}}, {"name": "Blue Jay", "sci": "Cyanocitta cristata", "n": 4, "first": "9:00 AM", "last": "9:04 AM", "ts": 1793192409, "mins": [540, 541, 543, 544], "anim": null, "trunk": false, "fact": "That blue isn’t a pigment. Tiny structures in the feathers scatter light, which is why a crushed blue feather looks brown. Jays also bury acorns and help spread oak trees.", "vox": "sounds/voice/cyanocitta-cristata.mp3?v=1793112993", "snd": "sounds/cyanocitta-cristata.mp3?v=1793113328", "sndby": "Christopher McPherson, xeno-canto XC691163, CC BY-NC-SA 4.0", "key": "bluejay", "cm": 28.0, "img": "cutouts/bluejay.png", "w": 385, "h": 369, "len": 474.0, "beak": [0.99, 0.17, "R"], "mask": {"c": 32, "r": 31, "b": "AAAPAAAAD+AAAAfwAAAH+AAAD/4AAA//AAAf/gAAf/AAAP/wAAH/8AAD//AAB//wAA//4AAf/+AAP//gAH//zAB//5wA/89wAf+OcAP38MAD9+PgAfh/gAPgHwAHgD4ADwA4AB8AMAA+AGAAPADgAHgAwADwAAAA4AAAAA=="}}, {"name": "Ruby-crowned Kinglet", "sci": "Corthylio calendula", "n": 1, "first": "9:01 AM", "last": "9:01 AM", "ts": 1793192515, "mins": [541], "anim": null, "trunk": false, "fact": "Its ruby crown stays hidden under olive feathers until the male gets excited, then it flares up. A ruby-crowned kinglet flicks its wings constantly.", "vox": "sounds/voice/corthylio-calendula.mp3?v=1793112988", "snd": "sounds/corthylio-calendula.mp3?v=1793113143", "sndby": "Andrew Spencer, xeno-canto XC104679, CC BY-NC-ND 2.5", "key": "rubykinglet", "cm": 10.8, "img": "cutouts/rubykinglet.png", "w": 800, "h": 653, "len": 568.0, "beak": [0.09, 0.35, "L"], "mask": {"c": 32, "r": 26, "b": "AAAAAwAAAAYAAAAGAAAADAAAADgAAAAwA8AAYA/wAOAf/ADAH/8BwAf/hwAH/+YAB//8AAP//gAD//+AAf/hAAB/wAAAH4AAAD8AAAB8AAAA8AAAAfAAAA+AAAAeAAAAOAAAAPAAAAA="}}, {"name": "White-throated Sparrow", "sci": "Zonotrichia albicollis", "n": 1, "first": "9:04 AM", "last": "9:04 AM", "ts": 1793192686, "mins": [544], "anim": null, "trunk": false, "fact": "White-throats come in two color forms, white-striped and tan-striped, and almost always pair with the opposite form. Listen for “Oh-sweet-Canada, Canada, Canada.”", "vox": "sounds/voice/zonotrichia-albicollis.mp3?v=1793113071", "snd": "sounds/zonotrichia-albicollis.mp3?v=1793113140", "sndby": "Matt Wistrand, xeno-canto XC339648, CC BY-NC-SA 4.0", "key": "whitethroated", "cm": 17.0, "img": "cutouts/whitethroated.png", "w": 800, "h": 460, "len": 599.0, "beak": [0.73, 0.14, "R"], "mask": {"c": 32, "r": 18, "b": "AAA+AAAB/gAAB/8DAB/+BgB//hwB//44f//84P///8AAP/8AAA/8AAAD8AAAA/AAAA8AAAA/AAAAcAAAAeAAAAOAAAAHAAAA"}}, {"name": "Eastern Bluebird", "sci": "Sialia sialis", "n": 5, "first": "9:07 AM", "last": "9:09 AM", "ts": 1793192826, "mins": [547, 548, 548, 548, 549], "anim": null, "trunk": false, "fact": "Bluebirds nest in tree cavities, and their numbers crashed in the early 1900s when starlings and house sparrows took the holes. Volunteer nest-box trails helped them rebound.", "vox": "sounds/voice/sialia-sialis.mp3?v=1793113046", "snd": "sounds/sialia-sialis.mp3?v=1793113130", "sndby": "Robin Carter, xeno-canto XC1374, CC BY-NC-ND 2.5", "key": "bluebird", "cm": 18.0, "img": "cutouts/bluebird.png", "w": 800, "h": 609, "len": 744.0, "beak": [0.69, 0.1, "R"], "mask": {"c": 32, "r": 24, "b": "AAPwAAAH+AAAD/wAAA/4AAAf8AAAH/AAAD/wAAB/+AAAf/gDAP/wBgH/8BwB//BwA//g4Af/w4AH/44AD/94AB//4AA/P4AAPH0AAHPhAABngAAA3gAAAPgAAABgAAAA"}}, {"name": "Tufted Titmouse", "sci": "Baeolophus bicolor", "n": 2, "first": "9:09 AM", "last": "9:09 AM", "ts": 1793192969, "mins": [549, 549], "anim": null, "trunk": false, "fact": "Titmice line their nests with hair, and they have been seen plucking it from live raccoons, dogs, and even people.", "vox": "sounds/voice/baeolophus-bicolor.mp3?v=1793112971", "snd": "sounds/baeolophus-bicolor.mp3?v=1793113083", "sndby": "Jim Berry, xeno-canto XC649331, CC BY-NC-SA 4.0", "key": "titmouse", "cm": 16.5, "img": "cutouts/titmouse.png", "w": 574, "h": 800, "len": 653.0, "beak": [0.2, 0.25, "L"], "mask": {"c": 32, "r": 45, "b": "cAAAAHAAAAAwAAAAIAAAAGgBAAA8BwAAPB8AAD4/AAAcf4AAWP+AAHv/wAB7/8AA+P/AANhH4AAbH/AADz/wAA9/+AAPP/wABD/8AB6//gAO//4ABt//AAfP/wAHx/+AB+P/gAPh/4ADiP/AB4Z/wAeH/+AHofvgBPOB8AD3APgAfAB4APgAPAD4AB4A+AAeAPwADwA3AA8ANgAGAD4AAAAeAAAAGgAAABgAAAAMAAAADAAA"}}], "also": [], "date": "Wednesday, October 28", "where": "", "updated": "9:10 AM", "sun": null, "code": "c77df8f1e9", "listen": {"state": "on", "since": null, "control": false}};
+  var D = {"birds": [{"name": "American Goldfinch", "sci": "Spinus tristis", "n": 1, "first": "8:59 AM", "last": "8:59 AM", "ts": 1793192354, "mins": [539], "anim": null, "trunk": false, "fact": "One of the strictest vegetarians among birds. Goldfinches nest late in summer, when thistle seeds are ripe, and swap bright yellow for olive-brown in winter.", "vox": "sounds/voice/spinus-tristis.mp3?v=1793113053", "snd": "sounds/spinus-tristis.mp3?v=1793113090", "sndby": "Will Sweet, xeno-canto XC453934, CC BY-NC-SA 4.0", "key": "goldfinch", "cm": 12.0, "img": "cutouts/goldfinch.png", "w": 517, "h": 369, "len": 415.0, "beak": [0.18, 0.15, "L"], "mask": {"c": 32, "r": 23, "b": "APgAAAH4AAAD/AAAB/wAAAP+AAEB/wAHAf+ADgH/wBwB/8DwAf/h4AH/94AA//8AAH/8ABA/+AAAH/wAAB/+AAA/fhAAeA8AA/gHgAfgB8APAANAPAAAADgAAAA="}}, {"name": "Carolina Chickadee", "sci": "Poecile carolinensis", "n": 8, "first": "8:59 AM", "last": "9:08 AM", "ts": 1793192356, "mins": [539, 541, 542, 543, 543, 545, 547, 548], "anim": null, "trunk": false, "fact": "Chickadees hide seeds in many separate spots and can remember where for weeks, then dig them back out when food gets scarce.", "vox": "sounds/voice/poecile-carolinensis.mp3?v=1793113028", "snd": "sounds/poecile-carolinensis.mp3?v=1793113078", "sndby": "J.R. Rigby, xeno-canto XC309925, CC BY-NC-SA 4.0", "key": "chickadee", "cm": 12.5, "img": "cutouts/chickadee.png", "w": 686, "h": 800, "len": 829.0, "beak": [0.78, 0.05, "R"], "mask": {"c": 32, "r": 37, "b": "AAB+AQAA/8MAAf+DAAP/gwAD/wYAA/8GAAf/PAAH/7wAB//8AA//+AAf//4AH/+/AD//vwA//38Af/98AP//5AD//sAA//3AAf/9gAH//4AD//+AA///gAf//4APg/wADgH8ABwA+AA4APgAeAH4AHAB8ADgA/AAwAeAAMAPAAAAHwAAADwAAAA8AAAAeAAAADAAAA=="}}, {"name": "House Finch", "sci": "Haemorhous mexicanus", "n": 7, "first": "8:59 AM", "last": "9:11 AM", "ts": 1793192388, "mins": [539, 542, 543, 547, 550, 550, 551], "anim": null, "trunk": false, "fact": "Native to the West, house finches were released on Long Island in 1940 as pet-shop “Hollywood finches” and spread across the East. Redder males are favored by females.", "vox": "sounds/voice/haemorhous-mexicanus.mp3?v=1793113005", "snd": "sounds/haemorhous-mexicanus.mp3?v=1793113108", "sndby": "Ted Floyd, xeno-canto XC622745, CC BY-NC-SA 4.0", "key": "housefinch", "cm": 14.0, "img": "cutouts/housefinch.png", "w": 800, "h": 581, "len": 662.0, "beak": [0.12, 0.13, "L"], "mask": {"c": 32, "r": 23, "b": "B+AAAAfwAQoP8AHOH/gB7wf8Af8D/gH/B/8A3wf/AP4H/4zgB//fwAP/zwAD//4AAf/+AAD//AAAf/gAAD/8AA/+/AAH4B4AB+APAB6AD4A4AAeA8AAAAMAAAAA="}}, {"name": "Blue Jay", "sci": "Cyanocitta cristata", "n": 4, "first": "9:00 AM", "last": "9:04 AM", "ts": 1793192409, "mins": [540, 541, 543, 544], "anim": null, "trunk": false, "fact": "That blue isn’t a pigment. Tiny structures in the feathers scatter light, which is why a crushed blue feather looks brown. Jays also bury acorns and help spread oak trees.", "vox": "sounds/voice/cyanocitta-cristata.mp3?v=1793112993", "snd": "sounds/cyanocitta-cristata.mp3?v=1793113328", "sndby": "Christopher McPherson, xeno-canto XC691163, CC BY-NC-SA 4.0", "key": "bluejay", "cm": 28.0, "img": "cutouts/bluejay.png", "w": 385, "h": 369, "len": 474.0, "beak": [0.99, 0.17, "R"], "mask": {"c": 32, "r": 31, "b": "AAAPgAAAD+AAAA/4AAAH+AAAD/8AAB//AAA//gAAf/AAAP/wAAH/8AAD//AAB//wAB//4AAf/+AAf//gAH//zAD//5wA//94Af+OcAP/8eAD9/fgA/l/gAPgHwAHgD4AHwA4AB8AeAA+AGAAfADgAHgAwADwAAAA4AAAAA=="}}, {"name": "Ruby-crowned Kinglet", "sci": "Corthylio calendula", "n": 1, "first": "9:01 AM", "last": "9:01 AM", "ts": 1793192515, "mins": [541], "anim": null, "trunk": false, "fact": "Its ruby crown stays hidden under olive feathers until the male gets excited, then it flares up. A ruby-crowned kinglet flicks its wings constantly.", "vox": "sounds/voice/corthylio-calendula.mp3?v=1793112988", "snd": "sounds/corthylio-calendula.mp3?v=1793113143", "sndby": "Andrew Spencer, xeno-canto XC104679, CC BY-NC-ND 2.5", "key": "rubykinglet", "cm": 10.8, "img": "cutouts/rubykinglet.png", "w": 800, "h": 653, "len": 568.0, "beak": [0.09, 0.35, "L"], "mask": {"c": 32, "r": 26, "b": "AAAAAwAAAAcAAAAGAAAADAAAADgAAAAwB8AAYA/wAOA//ADAH/8BwAf/hwAH/+YAB//8AAP//gAD//+AAf/jAAD/wAAAH4AAAD8AAAB+AAAA8AAAAfAAAA+AAAAeAAAAeAAAAPAAAAA="}}, {"name": "White-throated Sparrow", "sci": "Zonotrichia albicollis", "n": 7, "first": "9:04 AM", "last": "9:13 AM", "ts": 1793192686, "mins": [544, 550, 551, 552, 552, 553, 553], "anim": null, "trunk": false, "fact": "White-throats come in two color forms, white-striped and tan-striped, and almost always pair with the opposite form. Listen for “Oh-sweet-Canada, Canada, Canada.”", "vox": "sounds/voice/zonotrichia-albicollis.mp3?v=1793113071", "snd": "sounds/zonotrichia-albicollis.mp3?v=1793113140", "sndby": "Matt Wistrand, xeno-canto XC339648, CC BY-NC-SA 4.0", "key": "whitethroated", "cm": 17.0, "img": "cutouts/whitethroated.png", "w": 800, "h": 460, "len": 599.0, "beak": [0.73, 0.14, "R"], "mask": {"c": 32, "r": 18, "b": "AAB+AAAB/gAAB/8DAB/+BwB//h4B//54f//84P///8AAP/8AAA/8AAAD8AAAA/AAAA8AAAA/AAAAeAAAAeAAAAeAAAAHAAAA"}}, {"name": "Eastern Bluebird", "sci": "Sialia sialis", "n": 6, "first": "9:07 AM", "last": "9:11 AM", "ts": 1793192826, "mins": [547, 548, 548, 548, 549, 551], "anim": null, "trunk": false, "fact": "Bluebirds nest in tree cavities, and their numbers crashed in the early 1900s when starlings and house sparrows took the holes. Volunteer nest-box trails helped them rebound.", "vox": "sounds/voice/sialia-sialis.mp3?v=1793113046", "snd": "sounds/sialia-sialis.mp3?v=1793113130", "sndby": "Robin Carter, xeno-canto XC1374, CC BY-NC-ND 2.5", "key": "bluebird", "cm": 18.0, "img": "cutouts/bluebird.png", "w": 800, "h": 609, "len": 744.0, "beak": [0.69, 0.1, "R"], "mask": {"c": 32, "r": 24, "b": "AAPwAAAH/AAAD/4AAA/4AAAf8AAAH/AAAD/wAAB/+AAAf/gDAP/wDgH/8BwD//B4A//h4Af/54AH/94AD/98AB//4AA/P4AAPH0AAHPhAABvgAAA3gAAAPgAAABwAAAA"}}, {"name": "Tufted Titmouse", "sci": "Baeolophus bicolor", "n": 5, "first": "9:09 AM", "last": "9:12 AM", "ts": 1793192969, "mins": [549, 549, 550, 551, 552], "anim": null, "trunk": false, "fact": "Titmice line their nests with hair, and they have been seen plucking it from live raccoons, dogs, and even people.", "vox": "sounds/voice/baeolophus-bicolor.mp3?v=1793112971", "snd": "sounds/baeolophus-bicolor.mp3?v=1793113083", "sndby": "Jim Berry, xeno-canto XC649331, CC BY-NC-SA 4.0", "key": "titmouse", "cm": 16.5, "img": "cutouts/titmouse.png", "w": 574, "h": 800, "len": 653.0, "beak": [0.2, 0.25, "L"], "mask": {"c": 32, "r": 45, "b": "cAAAAHAAAAAwAAAAIAAAAGgDAAB8B4AAPB8AAD5/AAA+/4AAeP+AAHv/wAB7/8AA+P/gAPhn4ACbH/AADz/wAA9/+AAPf/wABb/8AB+//gAO//4ABt//AAfP/wAHx/+AB+P/gAPh/8AHiP/AB47/wAeH/+AHofvgBvOB8AD3APgAfAB4APgAPAD4AB4A+AAfAPwADwA3AA8APwAHAD4AAAAfAAAAGwAAABgAAAAMAAAADAAA"}}, {"name": "Red-shouldered Hawk", "sci": "Buteo lineatus", "n": 3, "first": "9:11 AM", "last": "9:15 AM", "ts": 1793193060, "mins": [551, 554, 555], "anim": null, "trunk": false, "vox": "sounds/voice/buteo-lineatus.mp3?v=1793193086", "snd": "sounds/buteo-lineatus.mp3?v=1793193085", "sndby": "Thomas Magarian, xeno-canto XC481269, CC BY-NC-SA 4.0", "life": true, "key": "ph-redshoulderedhawk", "ph": true, "cm": 15, "img": "", "w": 560, "h": 440, "len": 470}], "also": [], "date": "Wednesday, October 28", "where": "", "updated": "9:15 AM", "sun": null, "code": "ee184552d3", "listen": {"state": "on", "since": null, "control": false}};
   var root = document.documentElement;
   try {
     var tvq = /[?&]tv(?:=([^&#]*))?/.exec(location.search);
@@ -574,7 +573,7 @@
     var mm = (b.ph && mode < 1) ? 1 : mode;   /* a blank card always shows its name */
     var capW = capWidth(b, U, mm), capH = U * CAPH[mm];
     return { b: b, w: w, h: h, bw: Math.max(w, capW), bh: h + capH, capW: capW, capH: capH,
-             grow: grow || 1 };
+             grow: grow || 1, U: U };
   }
   function pack(list, s, AW, AH, U, mode) {
     var capH = U * CAPH[mode], gx = U * (mode ? 1.7 : 1.1), gy = U * (mode ? 0.9 : 0.6);
@@ -636,6 +635,37 @@
      plate is spread out to fill the screen edge to edge. ?plate=off goes back
      to the plain rectangles (for comparing). */
   var PLATE_ON = !/[?&]plate=off/.test(location.search);
+  /* Air between birds (in units of the text size) and how much a bird may grow
+     into spare room. ?gap= and ?grow= try other values on one screen. */
+  /* PLATE_INK: at most this share of a slide is covered by the birds themselves
+     (beaks, feathers and perches; not the paper between). More looks crowded, less
+     leaves gaps; whatever room is left is shared out evenly between the birds. */
+  var PLATE_GAP = 1.1, PLATE_GROW = 1.12, PLATE_INK = 0.31;
+  (function () {
+    var m = /[?&]gap=([0-9.]+)/.exec(location.search), n = /[?&]grow=([0-9.]+)/.exec(location.search),
+        k = /[?&]ink=([0-9.]+)/.exec(location.search);
+    if (m) { PLATE_GAP = Math.max(0.2, Math.min(4, +m[1])); }
+    if (n) { PLATE_GROW = Math.max(1, Math.min(1.4, +n[1])); }
+    if (k) { PLATE_INK = Math.max(0.1, Math.min(0.8, +k[1])); }
+  })();
+  /* How much of its picture box a bird fills (from its outline). */
+  var FILLS = {};
+  function fillOf(b) {
+    var k = b.key || b.name;
+    if (k in FILLS) { return FILLS[k]; }
+    var m = maskOf(b), v = 0.55;
+    if (m) { var on = 0; for (var i = 0; i < m.bits.length; i++) { on += m.bits[i]; } v = on / m.bits.length; }
+    return (FILLS[k] = v);
+  }
+  /* The scale at which the birds would cover PLATE_INK of the slide. */
+  function inkScale(list, AW, AH) {
+    var a = 0;
+    list.forEach(function (b) {
+      var f = Math.pow(b.cm, 0.8) / b.len;
+      a += fillOf(b) * b.w * f * b.h * f;
+    });
+    return a > 0 ? Math.sqrt(PLATE_INK * AW * AH / a) : Infinity;
+  }
   var MASKS = {};
   function maskOf(b) {
     var k = b.key || b.name;
@@ -653,8 +683,11 @@
   /* One bird as page cells: its outline, its name box, plus pad cells of air all
      round. Returns the shape in 32 pre-shifted copies so a position test is a few
      word-wide ANDs per row. */
-  function shapeOf(it, g, pad) {
-    var cols = Math.max(1, Math.ceil(it.bw / g)), rows = Math.max(1, Math.ceil(it.bh / g));
+  function shapeOf(it, g, pad, halo) {
+    /* A name keeps a little extra air below and beside it, so it reads as
+       belonging to the bird above it and not to a neighbour tucked underneath. */
+    var below = it.capW > 0 ? it.U * 1.1 : 0, side = it.capW > 0 ? it.U * 0.4 : 0;
+    var cols = Math.max(1, Math.ceil(it.bw / g)), rows = Math.max(1, Math.ceil((it.bh + below) / g));
     var m = maskOf(it.b), ix = (it.bw - it.w) / 2, cx = (it.bw - it.capW) / 2;
     var occ = new Uint8Array(rows * cols);
     for (var r = 0; r < rows; r++) {
@@ -673,12 +706,14 @@
             }
           }
         }
-        if (!on && it.capH > 0 && y1 > it.h && y0 < it.h + it.capH && x1 > cx && x0 < cx + it.capW) { on = 1; }
+        if (!on && it.capW > 0 && y1 > it.h && y0 < it.h + it.capH + below &&
+            x1 > cx - side && x0 < cx + it.capW + side) { on = 1; }
         occ[r * cols + c] = on;
       }
     }
     /* What goes on the page is the outline grown by pad cells of air; what is
        tested against the page is the bare outline, so birds keep pad cells apart. */
+    if (halo) { pad = pad + halo; }
     var R2 = rows + 2 * pad, C2 = cols + 2 * pad, dil = new Uint8Array(R2 * C2), raw = new Uint8Array(R2 * C2);
     for (var r2 = 0; r2 < rows; r2++) {
       for (var c2 = 0; c2 < cols; c2++) {
@@ -709,6 +744,7 @@
       }
       return out;
     }
+    if (halo) { return { R: R2, C: C2, pw: pw, sh: shifted(dil), cols: cols, rows: rows }; }
     return { R: R2, C: C2, pw: pw, sh: shifted(dil), tsh: shifted(raw), cols: cols, rows: rows };
   }
   function Grid(W, H) { this.W = W; this.H = H; this.ww = Math.ceil(W / 32) + 2; this.a = new Uint32Array(this.ww * H); }
@@ -727,6 +763,20 @@
       var base = (Y + r) * ww + wx, sr = r * pw;
       for (var w = 0; w < pw; w++) { a[base + w] = on ? (a[base + w] | S[sr + w]) : (a[base + w] & ~S[sr + w]); }
     }
+  };
+  function popc(v) {
+    v = v - ((v >>> 1) & 0x55555555);
+    v = (v & 0x33333333) + ((v >>> 2) & 0x33333333);
+    return (((v + (v >>> 4)) & 0x0F0F0F0F) * 0x01010101) >>> 24;
+  }
+  /* How many cells of a halo touch what is already on the grid. */
+  Grid.prototype.touch = function (sp, X, Y) {
+    var S = sp.sh[X & 31], wx = X >> 5, a = this.a, ww = this.ww, pw = sp.pw, n = 0;
+    for (var r = 0; r < sp.R; r++) {
+      var base = (Y + r) * ww + wx, sr = r * pw;
+      for (var w = 0; w < pw; w++) { var v = a[base + w] & S[sr + w]; if (v) { n += popc(v); } }
+    }
+    return n;
   };
   /* The highest spot (then the one nearest the middle) where the shape fits. */
   function bestSpot(G, sp) {
@@ -756,7 +806,7 @@
       G.put(sp, at.X, at.Y, true);
       placed.push({ it: items[k], sp: sp, X: at.X, Y: at.Y });
     }
-    return { G: G, placed: placed, s: s };
+    return { G: G, placed: placed, s: s, sorter: sorter };
   }
   var BY_AREA = function (a, b) { return (b.w * b.h) - (a.w * a.h); };
   var BY_HEIGHT = function (a, b) { return (b.bh - a.bh) || (b.bw - a.bw); };
@@ -771,7 +821,7 @@
     if (k in PLATE_CACHE) { return PLATE_CACHE[k]; }
     var s0 = fitScale(list, AW, AH, U, mode), v = 0;
     if (s0 > 0) {
-      var g = Math.max(4, Math.min(AW, AH * 1.6) / 130), pad = Math.max(1, Math.round(U * 0.6 / g));
+      var g = Math.max(4, Math.min(AW, AH * 1.6) / 130), pad = Math.max(1, Math.round(U * PLATE_GAP / g));
       var ctx = { AW: AW, AH: AH, U: U, mode: mode, g: g, pad: pad,
                   GW: Math.floor(AW / g) + 2 * pad, GH: Math.floor(AH / g) + 2 * pad };
       var lo = s0 * 0.85, hi = s0 * 2.4;
@@ -784,11 +834,12 @@
       }
       v = Math.max(v, s0);
     }
+    if (v > 0) { v = Math.min(v, inkScale(list, AW, AH)); }
     return (PLATE_CACHE[k] = v);
   }
   function platePack(list, AW, AH, U, mode, s0) {
     if (!PLATE_ON || !list.length || !(s0 > 0)) { return null; }
-    var g = Math.max(4, Math.min(AW, AH * 1.6) / 130), pad = Math.max(1, Math.round(U * 0.6 / g));
+    var g = Math.max(4, Math.min(AW, AH * 1.6) / 130), pad = Math.max(1, Math.round(U * PLATE_GAP / g));
     var ctx = { AW: AW, AH: AH, U: U, mode: mode, g: g, pad: pad,
                 GW: Math.floor(AW / g) + 2 * pad, GH: Math.floor(AH / g) + 2 * pad };
     var best = null;
@@ -802,29 +853,41 @@
       if (!best || got.s > best.s) { best = got; }
     });
     if (!best || best.s < s0 * 0.98) { return null; }   /* the rectangles did better: keep them */
+    /* Not too crowded: no more than PLATE_INK of the slide covered by birds. */
+    var sInk = inkScale(list, AW, AH), capped = false;
+    if (best.s > sInk) {
+      var t2 = plateTry(list, sInk, ctx, best.sorter) || plateTry(list, sInk, ctx, best.sorter === BY_AREA ? BY_HEIGHT : BY_AREA);
+      if (t2) { best = t2; capped = true; }
+    }
     var G = best.G, placed = best.placed;
     /* Let each bird grow into the room around it (a little: sizes stay honest). */
-    var GROW = 1.22;
-    function growAll(G, passes) {
+    var GROW = Math.max(1, Math.min(PLATE_GROW, sInk / best.s));   /* growing never crowds past PLATE_INK */
+    /* The page with every bird but one on it. (Air zones of neighbours may
+       overlap, so a bird is never lifted off by clearing its cells: that could
+       punch holes in a neighbour's air.) */
+    function without(q) {
+      var G = new Grid(ctx.GW, ctx.GH);
+      placed.forEach(function (p) { if (p !== q) { G.put(p.sp, p.X, p.Y, true); } });
+      return G;
+    }
+    function growAll(passes) {
       for (var pass = 0; pass < passes; pass++) {
         placed.slice().sort(function (a, b) { return a.it.w * a.it.h - b.it.w * b.it.h; }).forEach(function (p) {
           if (p.it.grow >= GROW) { return; }
           var next = itemFor(p.it.b, best.s, U, mode, Math.min(GROW, p.it.grow + 0.055));
           if (next.h > AH * 0.66 || next.bw > AW) { return; }
-          var sp = shapeOf(next, g, pad);
+          var sp = shapeOf(next, g, pad), G = without(p);
           var cx = p.X + p.sp.C / 2, cy = p.Y + p.sp.R / 2;
-          G.put(p.sp, p.X, p.Y, false);
           var tries = [[0, 0], [0, -1], [0, 1], [-1, 0], [1, 0], [-1, -1], [1, -1], [-1, 1], [1, 1],
-                       [0, -2], [0, 2], [-2, 0], [2, 0]], done = false;
-          for (var t = 0; t < tries.length && !done; t++) {
+                       [0, -2], [0, 2], [-2, 0], [2, 0]];
+          for (var t = 0; t < tries.length; t++) {
             var X = Math.round(cx - sp.C / 2) + tries[t][0], Y = Math.round(cy - sp.R / 2) + tries[t][1];
-            if (G.fits(sp, X, Y)) { G.put(sp, X, Y, true); p.it = next; p.sp = sp; p.X = X; p.Y = Y; done = true; }
+            if (G.fits(sp, X, Y)) { p.it = next; p.sp = sp; p.X = X; p.Y = Y; break; }
           }
-          if (!done) { G.put(p.sp, p.X, p.Y, true); }
         });
       }
     }
-    growAll(G, 4);
+    if (GROW > 1.01) { growAll(4); }
     /* Spread the plate over the whole screen: move the birds apart (sizes stay)
        as far as they will go without touching. */
     function bounds() {
@@ -850,15 +913,47 @@
     }
     var fx = 1, fy = 1, pos = trySpread(1, 1);
     if (pos) {
-      var bb0 = bounds(), maxX = Math.min(1.7, (ctx.GW - 2 * pad) / Math.max(1, bb0.x1 - bb0.x0)),
-          maxY = Math.min(1.6, (ctx.GH - 2 * pad) / Math.max(1, bb0.y1 - bb0.y0));
+      var bb0 = bounds(), maxX = Math.min(2.6, (ctx.GW - 2 * pad) / Math.max(1, bb0.x1 - bb0.x0)),
+          maxY = Math.min(2.4, (ctx.GH - 2 * pad) / Math.max(1, bb0.y1 - bb0.y0));
       for (var f = maxX; f > 1.001; f -= 0.04) { var q = trySpread(f, 1); if (q) { fx = f; pos = q; break; } }
       for (var f2 = maxY; f2 > 1.001; f2 -= 0.04) { var q2 = trySpread(fx, f2); if (q2) { fy = f2; pos = q2; break; } }
       placed.forEach(function (p, i) { p.X = pos[i][0]; p.Y = pos[i][1]; });
       /* The spread made new room: grow once more into it. */
-      var G3 = new Grid(ctx.GW, ctx.GH);
-      placed.forEach(function (p) { G3.put(p.sp, p.X, p.Y, true); });
-      growAll(G3, 3);
+      if (GROW > 1.01) { growAll(3); }
+      evenOut();
+    }
+    /* Even out the air: each bird in turn takes small steps away from whatever
+       crowds it (other birds, and a little the edges of the screen), so the
+       space is shared out instead of pooling in one corner. */
+    function evenOut() {
+      var R = Math.max(2, pad * 2), M = R + 1;
+      var edge = new Grid(ctx.GW + 2 * M, ctx.GH + 2 * M);
+      for (var y = 0; y < edge.H; y++) {       /* the screen edge counts as half-crowded */
+        for (var x = 0; x < edge.W; x++) {
+          var inside = x >= M && x < M + ctx.GW && y >= M && y < M + ctx.GH;
+          if (!inside && (x + y) % 2 === 0) { edge.a[y * edge.ww + (x >> 5)] |= (1 << (x & 31)); }
+        }
+      }
+      placed.forEach(function (p) { p.halo = shapeOf(p.it, g, pad, R); });
+      var steps = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1],
+                   [2, 0], [-2, 0], [0, 2], [0, -2]];
+      for (var pass = 0; pass < 10; pass++) {
+        var moved = 0;
+        placed.forEach(function (p) {
+          var G = without(p), SG = new Grid(edge.W, edge.H);
+          SG.a.set(edge.a);
+          placed.forEach(function (o) { if (o !== p) { SG.put(o.sp, o.X + M, o.Y + M, true); } });
+          var bestS = SG.touch(p.halo, p.X + M - R, p.Y + M - R), bx = p.X, by = p.Y;
+          for (var i = 0; i < steps.length; i++) {
+            var X = p.X + steps[i][0], Y = p.Y + steps[i][1];
+            if (!G.fits(p.sp, X, Y)) { continue; }
+            var sc = SG.touch(p.halo, X + M - R, Y + M - R);
+            if (sc < bestS - 1) { bestS = sc; bx = X; by = Y; }
+          }
+          if (bx !== p.X || by !== p.Y) { moved++; p.X = bx; p.Y = by; }
+        });
+        if (!moved) { break; }
+      }
     }
     var offX = (AW - (ctx.GW - 2 * pad) * g) / 2, offY = (AH - (ctx.GH - 2 * pad) * g) / 2;
     var rows = placed.slice().sort(function (a, b) { return (a.Y - b.Y) || (a.X - b.X); }).map(function (p) {
@@ -888,7 +983,8 @@
     function good(chunks, k) {
       return chunks.every(function (c) {
         var need = needFor(c) * k;
-        return fitScale(c, AW, AH, U, 2) >= need || plateScale(c, AW, AH, U, 2) >= need;
+        return Math.min(Math.max(fitScale(c, AW, AH, U, 2), plateScale(c, AW, AH, U, 2)),
+                        PLATE_ON ? inkScale(c, AW, AH) : Infinity) >= need;
       });
     }
     for (var p = 1; p <= list.length; p++) {
@@ -911,7 +1007,8 @@
     function legible(chunks) {
       return chunks.every(function (c) {
         var minCm = Math.min.apply(null, c.map(function (b) { return b.cm; })), want = need / Math.pow(minCm, 0.8);
-        return fitScale(c, AW, AH, U, 2) >= want || plateScale(c, AW, AH, U, 2) >= want;
+        return Math.min(Math.max(fitScale(c, AW, AH, U, 2), plateScale(c, AW, AH, U, 2)),
+                        PLATE_ON ? inkScale(c, AW, AH) : Infinity) >= want;
       });
     }
     var top = Math.max(1, Math.ceil(list.length / 3)), chunks = null;
@@ -1030,9 +1127,10 @@
     return el;
   }
 
-  /* ---- Singing now: little music notes rise from the beak of any bird heard
-     in the last 15 minutes. The beak point comes from plates.json ("beak":
-     fractions of the picture plus the way the bird faces). ---- */
+  /* ---- Music notes: now and then a little puff of two or three notes rises
+     from the beak of a bird heard in the last 15 minutes. The beak point comes
+     from plates.json ("beak": fractions of the picture plus the way the bird
+     faces). ---- */
   function notesFor(b, it, boxTop) {
     var bk = b.beak || (b.ph ? [0.86, 0.33, 'R'] : [0.5, 0.12, 'R']);
     var fs = Math.round(Math.max(22, Math.min(64, Math.sqrt(it.w * it.h) * 0.17)));
@@ -1049,18 +1147,58 @@
     n.innerHTML = '<i>\u266A</i><i>\u266B</i><i>\u266A</i>';
     return n;
   }
+  /* Which birds may sing: those heard in the last 15 minutes (minutes ago). */
+  var singOn = {};
   function singing() {
-    var d = new Date(), now = d.getHours() * 60 + d.getMinutes(), on = {};
+    var d = new Date(), now = d.getHours() * 60 + d.getMinutes();
+    singOn = {};
     D.birds.forEach(function (b) {
       var last = b.mins && b.mins.length ? b.mins[b.mins.length - 1] : -1;
-      if (last >= 0 && now - last >= 0 && now - last < 15) { on[b.name] = 1; }
+      if (last >= 0 && now - last >= 0 && now - last < 15) { singOn[b.name] = now - last; }
     });
-    var els = stage.querySelectorAll('.bird');
-    for (var i = 0; i < els.length; i++) {
-      els[i].classList.toggle('singing', !!on[els[i].getAttribute('data-name')]);
-    }
   }
   setInterval(singing, 15000);
+  /* Sporadic, never a constant chorus: one puff at a time somewhere on the
+     screen, then a pause of 4-8 s. A bird heard again sings next (at most every
+     20 s); otherwise a bird is picked now and then, resting about 25 s between
+     puffs if it was just heard and about a minute and a half if it was heard
+     15 minutes ago. */
+  var CHIRP_MS = 3700, chirpAt = {}, chirpJit = {}, chirpQ = [], chirpNext = 0;
+  function heardAgain(name) {
+    singOn[name] = 0;
+    if (chirpQ.every(function (q) { return q.n !== name; })) { chirpQ.push({ n: name, t: Date.now() }); }
+  }
+  function chirp(el, t) {
+    var name = el.getAttribute('data-name'), n = el.querySelector('.notes');
+    if (!n) { return; }
+    n.classList.toggle('two', Math.random() < 0.5);
+    el.classList.remove('chirp'); void el.offsetWidth; el.classList.add('chirp');
+    chirpAt[name] = t; chirpJit[name] = 0.75 + Math.random() * 0.5;
+    chirpNext = t + 4000 + Math.random() * 4000;
+    setTimeout(function () { el.classList.remove('chirp'); }, CHIRP_MS);
+  }
+  function chirpTick() {
+    var t = Date.now();
+    if (document.hidden || heroOn() || t < chirpNext) { return; }
+    var page = stage.querySelector('.page.on') || stage, els = page.querySelectorAll('.bird'), here = {};
+    for (var i = 0; i < els.length; i++) { here[els[i].getAttribute('data-name')] = els[i]; }
+    chirpQ = chirpQ.filter(function (q) { return t - q.t < 12000 && here[q.n] && q.n in singOn; });
+    for (var k = 0; k < chirpQ.length; k++) {
+      if (t - (chirpAt[chirpQ[k].n] || 0) > 20000) { chirp(here[chirpQ.splice(k, 1)[0].n], t); return; }
+    }
+    var cands = [], total = 0;
+    for (var name in here) {
+      if (!(name in singOn)) { continue; }
+      var ago = singOn[name];
+      if (t - (chirpAt[name] || 0) < (25 + ago * 4.5) * 1000 * (chirpJit[name] || 1)) { continue; }
+      var w = 1 / (1 + ago / 3);
+      cands.push([name, w]); total += w;
+    }
+    if (!cands.length) { return; }
+    var r = Math.random() * total;
+    for (var c = 0; c < cands.length; c++) { r -= cands[c][1]; if (r <= 0 || c === cands.length - 1) { chirp(here[cands[c][0]], t); return; } }
+  }
+  setInterval(chirpTick, 1000);
 
   /* The blank card for a bird with no picture yet: a dashed pencil outline. */
   var PH_SVG = '<svg viewBox="0 0 560 440" aria-hidden="true"><g fill="rgba(255,252,242,.55)" ' +
@@ -1773,11 +1911,11 @@
   /* ---- The full-screen card for a new bird ----
      A bird heard for the first time today fills the screen with its picture, its
      name and a fun fact, then steps aside and lands on the board. A first-ever
-     bird gets the filled stamp and stays at least two minutes. When several arrive
+     bird gets the filled stamp and stays at least a minute. When several arrive
      together they take turns, each shorter, so the board is never hidden for long.
      Tap, click or Esc closes it (and skips the rest of the queue). ?newbird=off
      goes back to the small banner on one screen; ?newbird=on turns the card back on. */
-  var HERO_ALONE_MS = 180000, HERO_LIFE_MIN_MS = 120000, HERO_HASTE_MS = 45000, HERO_MIN_MS = 30000;
+  var HERO_ALONE_MS = 90000, HERO_LIFE_MIN_MS = 60000, HERO_HASTE_MS = 25000, HERO_MIN_MS = 20000;
   var hero = $('hero'), hstage = $('h-stage'), heroQ = [], heroNow = null, heroTimer = null,
       heroOut = null, hintTimer = null, hTail = null, hHead = null,
       heroStart = 0, heroEnd = 0, heroPlan = 0, heroOff = false;
@@ -1788,7 +1926,7 @@
   } catch (e) { /* storage blocked: the card stays on */ }
   function heroOn() { return hero.classList.contains('on'); }
   function heroDwell(b) {
-    var q = heroQ.length, ms = q === 0 ? HERO_ALONE_MS : q === 1 ? 90000 : q === 2 ? 60000 : 40000;
+    var q = heroQ.length, ms = q === 0 ? HERO_ALONE_MS : q === 1 ? 45000 : q === 2 ? 30000 : 20000;
     return b.life ? Math.max(ms, HERO_LIFE_MIN_MS) : ms;
   }
   function fillHero(b) {
@@ -1977,6 +2115,7 @@
       var old = byName[nb.name];
       if (old && !!old.ph === !!nb.ph) {
         if (old.n !== nb.n) {
+          if (nb.n > old.n) { heardAgain(nb.name); }
           old.n = nb.n; old.count = 'heard ' + timesWord(nb.n);
           old.last = nb.last; old.mins = nb.mins; refreshCounts(old);
         }
